@@ -17,6 +17,12 @@ enum class ArticleCategory {
 
     @SerialName("Support")
     Support,
+
+    @SerialName("Glossary")
+    Glossary,
+
+    @SerialName("ReadList")
+    ReadList,
 }
 
 @Serializable

@@ -10,6 +10,7 @@ import { runCatching } from '@/util/result';
 const props = defineProps<{
   page: number;
   category: ArticleCategory;
+  subCategory: ArticleCategory;
 }>();
 
 const route = useRoute();
@@ -27,13 +28,28 @@ const articleCategoryOptions = [
   { value: 'Support', label: '反馈与建议' },
 ];
 
+const articleCategoryOptionsGeneral = [
+  { value: 'All', label: '全部' },
+  { value: 'Glossary', label: '术语表' },
+  { value: 'ReadList', label: '书单' },
+];
+
 const onUpdateCategory = (category: ArticleCategory) => {
-  const query = { ...route.query, category, page: 1 };
+  const query = { ...route.query, category, subCategory: 'All', page: 1 };
+  router.push({ path: route.path, query });
+};
+
+const onUpdateSubCategory = (subCategory: ArticleCategory) => {
+  const query = { ...route.query, subCategory, page: 1 };
   router.push({ path: route.path, query });
 };
 
 const loader = computed(() => {
-  const category = props.category;
+  const subCategory = props.subCategory;
+  let category = props.category;
+  if (subCategory !== 'All') {
+    category = subCategory;
+  }
   return (page: number) =>
     runCatching(
       ArticleRepository.listArticle({
@@ -119,6 +135,18 @@ const deleteArticle = (article: ArticleSimplified) =>
         :value="category"
         @update-value="onUpdateCategory"
         :options="articleCategoryOptions"
+      />
+    </c-action-wrapper>
+
+    <c-action-wrapper
+      v-if="category === 'General'"
+      title="子版块"
+      style="margin-bottom: 20px"
+    >
+      <c-radio-group
+        :value="subCategory"
+        @update-value="onUpdateSubCategory"
+        :options="articleCategoryOptionsGeneral"
       />
     </c-action-wrapper>
 

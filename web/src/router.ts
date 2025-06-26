@@ -222,6 +222,7 @@ const router = createRouter({
           props: (route) => ({
             page: Number(route.query.page) || 1,
             category: route.query.category || 'General',
+            subCategory: route.query.subCategory || 'All',
           }),
         },
         {

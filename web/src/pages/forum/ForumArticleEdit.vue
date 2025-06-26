@@ -8,9 +8,10 @@ import { ArticleCategory } from '@/model/Article';
 import { doAction, useIsWideScreen } from '@/pages/util';
 import { useArticleStore } from './ForumArticleStore';
 
-const { articleId, category } = defineProps<{
+const { articleId, category, subCategory } = defineProps<{
   articleId?: string;
   category?: ArticleCategory;
+  subCategory?: ArticleCategory;
 }>();
 
 const router = useRouter();
@@ -34,12 +35,19 @@ const articleCategoryOptions = whoami.value.asMaintainer
       { value: 'Support', label: '反馈与建议' },
     ];
 
+const articleCategoryOptionsGeneral = [
+  { value: 'All', label: '全部' },
+  { value: 'Glossary', label: '使用指南' },
+  { value: 'ReadList', label: '书单' },
+];
+
 const allowSubmit = ref(articleId === undefined);
 const formRef = ref<FormInst>();
 const formValue = ref({
   title: '',
   content: '',
   category,
+  subCategory: subCategory ?? 'All',
 });
 const formRules: FormRules = {
   title: [
@@ -78,13 +86,28 @@ const formRules: FormRules = {
   ],
 };
 
+const getCategory = (category: ArticleCategory) => {
+  if (category === 'Glossary' || category === 'ReadList') {
+    return 'General';
+  }
+  return category;
+};
+
+const getSubCategory = (category: ArticleCategory) => {
+  if (category === 'Glossary' || category === 'ReadList') {
+    return category;
+  }
+  return 'All';
+};
+
 store?.loadArticle()?.then((result) => {
   if (result.ok) {
     const { title, content, category } = result.value;
     formValue.value = {
       title,
       content,
-      category,
+      category: getCategory(category),
+      subCategory: getSubCategory(category),
     };
     allowSubmit.value = true;
   } else {
@@ -104,20 +127,26 @@ const submit = async () => {
     return;
   }
 
+  const submitValue = {
+    title: formValue.value.title,
+    content: formValue.value.content,
+    category:
+      formValue.value.subCategory === 'All'
+        ? (formValue.value.category as ArticleCategory)
+        : formValue.value.subCategory,
+  };
   if (store === undefined) {
     await doAction(
-      Locator.articleRepository
-        .createArticle(formValue.value as any)
-        .then((id) => {
-          draftRepo.removeDraft(draftId);
-          router.push({ path: `/forum/${id}` });
-        }),
+      Locator.articleRepository.createArticle(submitValue).then((id) => {
+        draftRepo.removeDraft(draftId);
+        router.push({ path: `/forum/${id}` });
+      }),
       '发布',
       message,
     );
   } else {
     await doAction(
-      store.updateArticle(formValue.value as any).then(() => {
+      store.updateArticle(submitValue).then(() => {
         draftRepo.removeDraft(draftId);
         router.push({ path: `/forum/${articleId}` });
       }),
@@ -151,6 +180,16 @@ const submit = async () => {
         <c-radio-group
           v-model:value="formValue.category"
           :options="articleCategoryOptions"
+        />
+      </n-form-item-row>
+      <n-form-item-row
+        path="subCategory"
+        label="子版块"
+        v-if="formValue.category === 'General'"
+      >
+        <c-radio-group
+          v-model:value="formValue.subCategory"
+          :options="articleCategoryOptionsGeneral"
         />
       </n-form-item-row>
       <n-form-item-row path="content" label="正文">

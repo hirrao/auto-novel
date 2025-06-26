@@ -1,6 +1,12 @@
 import { UserReference } from './User';
 
-export type ArticleCategory = 'Guide' | 'General' | 'Support';
+export type ArticleCategory =
+  | 'Guide'
+  | 'General'
+  | 'Support'
+  | 'All'
+  | 'Glossary'
+  | 'ReadList';
 
 export interface ArticleSimplified {
   id: string;
