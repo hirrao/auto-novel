@@ -9,7 +9,6 @@ import {
 
 import { FavoredApi } from '@/api';
 import { WebNovelRepo, WenkuNovelRepo } from '@/repos';
-import bannerUrl from '@/image/banner.webp';
 import type { WebNovelOutlineDto } from '@/model/WebNovel';
 import { useBreakPoints } from '@/pages/util';
 import { useWhoamiStore } from '@/stores';
@@ -103,8 +102,12 @@ const githubLink = 'https://github.com/auto-novel/auto-novel';
 
 <template>
   <div
-    :style="{ background: `rgba(0, 0, 0, .25) url(${bannerUrl})` }"
-    style="background-blend-mode: darken"
+    style="
+      background: rgba(0, 0, 0, 0.45) url('/files-extra/banner.v1.webp');
+      background-size: cover;
+      background-position: center top;
+      background-blend-mode: darken;
+    "
   >
     <div id="banner" class="layout-content">
       <n-h1

@@ -90,6 +90,10 @@ export default defineConfig(({ command, mode }) => {
           target: apiUrl,
           changeOrigin: true,
         },
+        '/files-extra': {
+          target: apiUrl,
+          changeOrigin: true,
+        },
       },
     };
   }
