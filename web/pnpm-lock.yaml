@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@auto-novel/crawler':
+        specifier: link:../crawler
+        version: link:../crawler
       '@img-comparison-slider/vue':
         specifier: ^8.0.0
         version: 8.0.0
