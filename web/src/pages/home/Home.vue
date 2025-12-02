@@ -74,7 +74,7 @@ const { data: mostVisitedWeb, error: mostVisitedWebError } =
   });
 
 const { data: latestUpdateWenku, error: latestUpdateWenkuError } =
-  WenkuNovelRepo.useWenkuNovelList(1, { level: 1 });
+  WenkuNovelRepo.useWenkuNovelList(1, { level: 0 });
 
 const showHowToUseModal = ref(false);
 const linkExample = [

@@ -23,6 +23,7 @@ import io.ktor.server.resources.post
 import io.ktor.server.resources.put
 import io.ktor.server.routing.*
 import io.ktor.utils.io.*
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.bson.types.ObjectId
 import org.koin.ktor.ext.inject
@@ -82,10 +83,11 @@ fun Route.routeWenkuNovel() {
                     pageSize = loc.pageSize,
                     filterLevel = when (loc.level) {
                         0 -> WenkuNovelFilter.Level.轻小说
-                        1 -> WenkuNovelFilter.Level.文学
-                        2 -> WenkuNovelFilter.Level.非小说
-                        3 -> WenkuNovelFilter.Level.R18男性向
-                        4 -> WenkuNovelFilter.Level.R18女性向
+                        1 -> WenkuNovelFilter.Level.轻文学
+                        2 -> WenkuNovelFilter.Level.文学
+                        3 -> WenkuNovelFilter.Level.非小说
+                        4 -> WenkuNovelFilter.Level.R18男性向
+                        5 -> WenkuNovelFilter.Level.R18女性向
                         else -> WenkuNovelFilter.Level.全部
                     },
                 )

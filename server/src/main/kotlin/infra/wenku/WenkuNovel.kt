@@ -10,7 +10,7 @@ import org.bson.conversions.Bson
 import org.bson.types.ObjectId
 
 object WenkuNovelFilter {
-    enum class Level { 全部, 轻小说, 文学, R18男性向, R18女性向, 非小说 }
+    enum class Level { 全部, 轻小说, 轻文学, 文学, R18男性向, R18女性向, 非小说 }
 }
 
 @Serializable
@@ -18,14 +18,17 @@ enum class WenkuNovelLevel {
     @SerialName("一般向")
     轻小说,
 
+    @SerialName("轻文学")
+    轻文学,
+
+    @SerialName("严肃向")
+    文学,
+
     @SerialName("成人向")
     R18男性向,
 
     @SerialName("成人向女")
     R18女性向,
-
-    @SerialName("严肃向")
-    文学,
 
     @SerialName("非小说")
     非小说,

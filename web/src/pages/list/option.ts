@@ -109,8 +109,8 @@ export function getWenkuListOptions(allowNsfw: boolean): WenkuListOptions {
     分级: {
       type: 'select',
       tags: allowNsfw
-        ? ['轻小说', '文学', '非小说', 'R18男性向', 'R18女性向']
-        : ['轻小说', '文学', '非小说'],
+        ? ['轻小说', '轻文学', '文学', '非小说', 'R18男性向', 'R18女性向']
+        : ['轻小说', '轻文学', '文学', '非小说'],
     },
   };
 }
