@@ -86,7 +86,7 @@ const formRules: FormRules = {
   level: [
     {
       validator: (_rule: FormItemRule, value: string) =>
-        value !== '成人向' || whoami.value.allowNsfw,
+        value !== '成人向' || whoami.value.hasNsfwAccess,
       message: '你太年轻了，无法创建成人向页面',
       trigger: 'input',
     },

@@ -138,7 +138,7 @@ function sortJpVolumes(volumeJp: VolumeJpDto[]) {
     <template v-if="novel">
       <n-flex>
         <router-link
-          v-if="whoami.allowAdvancedFeatures"
+          v-if="whoami.hasNovelAccess"
           :to="`/wenku-edit/${novelId}`"
         >
           <c-button label="编辑" :icon="EditNoteOutlined" />
