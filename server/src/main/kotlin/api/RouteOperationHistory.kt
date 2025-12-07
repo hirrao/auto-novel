@@ -110,7 +110,7 @@ class OperationHistoryApi(
         user: User,
         id: String,
     ) {
-        user.shouldBeAtLeast(UserRole.Admin)
+        user.requireAdmin()
         operationHistoryRepo.delete(id)
     }
 
@@ -158,7 +158,7 @@ class OperationHistoryApi(
         user: User,
         id: String,
     ) {
-        user.shouldBeAtLeast(UserRole.Admin)
+        user.requireAdmin()
         operationHistoryRepo.deleteMergeHistory(id)
     }
 }

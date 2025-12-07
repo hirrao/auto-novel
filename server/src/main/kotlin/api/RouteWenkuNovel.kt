@@ -247,15 +247,7 @@ class WenkuNovelApi(
     ): Page<WenkuNovelListItem> {
         validatePageNumber(page)
         validatePageSize(pageSize)
-
-        val filterLevelAllowed = if (
-            listOf(WenkuNovelFilter.Level.R18男性向, WenkuNovelFilter.Level.R18女性向).contains(filterLevel) &&
-            (user == null || !user.isOldAss())
-        ) {
-            WenkuNovelFilter.Level.轻小说
-        } else {
-            filterLevel
-        }
+        if (filterLevel.isNsfw) user.requireNsfwAccess()
 
         return metadataRepo
             .search(
@@ -263,7 +255,7 @@ class WenkuNovelApi(
                 userQuery = queryString,
                 page = page,
                 pageSize = pageSize,
-                filterLevel = filterLevelAllowed,
+                filterLevel = filterLevel,
             )
     }
 
@@ -296,13 +288,7 @@ class WenkuNovelApi(
         val metadata = metadataRepo.get(novelId)
             ?: throwNovelNotFound()
 
-        if (listOf(WenkuNovelLevel.R18男性向, WenkuNovelLevel.R18女性向).contains(metadata.level)) {
-            if (user == null) {
-                throwUnauthorized("请先登录")
-            } else {
-                user.shouldBeOldAss()
-            }
-        }
+        if (metadata.level.isNsfw) user.requireNsfwAccess()
 
         if (user != null) {
             metadataRepo.increaseVisited(
@@ -362,7 +348,7 @@ class WenkuNovelApi(
         user: User,
         body: MetadataCreateBody,
     ): String {
-        user.shouldBeOldAss()
+        user.requireNovelAccess()
         val novelId = metadataRepo.create(
             title = body.title,
             titleZh = body.titleZh,
@@ -396,7 +382,7 @@ class WenkuNovelApi(
         novelId: String,
         body: MetadataCreateBody,
     ) {
-        user.shouldBeOldAss()
+        user.requireNovelAccess()
         val novel = metadataRepo.get(novelId)
             ?: throwNovelNotFound()
 
@@ -409,7 +395,7 @@ class WenkuNovelApi(
                 }
             }
         if (!noVolumeDeleted) {
-            user.shouldBeAtLeast(UserRole.Maintainer)
+            user.requireMaintainer()
         }
 
         metadataRepo.update(
@@ -452,7 +438,7 @@ class WenkuNovelApi(
         novelId: String,
         glossary: Map<String, String>,
     ) {
-        user.shouldBeOldAss()
+        user.requireNovelAccess()
         val novel = metadataRepo.get(novelId)
             ?: throwNovelNotFound()
         if (glossary == novel.glossary)
@@ -517,7 +503,7 @@ class WenkuNovelApi(
         novelId: String,
         volumeId: String,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
 
         validateNovelId(novelId)
         validateVolumeId(volumeId)

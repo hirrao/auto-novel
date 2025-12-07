@@ -284,6 +284,7 @@ class ArticleApi(
     ): String {
         validateTitle(title)
         validateContent(content)
+        user.requireForumAccess()
 
         val articleId = articleRepo.createArticle(
             title = title,
@@ -303,9 +304,9 @@ class ArticleApi(
     ) {
         validateTitle(title)
         validateContent(content)
-
-        if (!(user.role atLeast UserRole.Maintainer) && !articleRepo.isArticleCreateBy(id = id, userId = user.id)) {
-            throwUnauthorized("只有文章作者才有权限编辑")
+        user.requireForumAccess()
+        if (!user.checkCustomRule { articleRepo.isArticleCreateBy(id = id, userId = user.id) }) {
+            throwUnauthorized("没有权限编辑当前文章")
         }
 
         articleRepo.updateTitleAndContent(
@@ -320,7 +321,7 @@ class ArticleApi(
         user: User,
         id: String,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
         val isDeleted = articleRepo.deleteArticle(id = id)
         if (!isDeleted) throwArticleNotFound()
         commentRepo.deleteCommentBySite("article-${id}")
@@ -331,7 +332,7 @@ class ArticleApi(
         id: String,
         pinned: Boolean,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
         val isUpdated = articleRepo.updateArticlePinned(id = id, pinned = pinned)
         if (!isUpdated) throwArticleNotFound()
     }
@@ -341,7 +342,7 @@ class ArticleApi(
         id: String,
         locked: Boolean,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
         val isUpdated = articleRepo.updateArticleLocked(id = id, locked = locked)
         if (!isUpdated) throwArticleNotFound()
     }
@@ -351,7 +352,7 @@ class ArticleApi(
         id: String,
         hidden: Boolean,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
         val isUpdated = articleRepo.updateArticleHidden(id = id, hidden = hidden)
         if (!isUpdated) throwArticleNotFound()
     }

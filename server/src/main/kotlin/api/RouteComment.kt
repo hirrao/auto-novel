@@ -173,8 +173,9 @@ class CommentApi(
         user: User,
         id: String,
     ) {
-        if (!(user.role atLeast UserRole.Maintainer) && !commentRepo.isCommentCanRevoke(id = id, userId = user.id)) {
-            throwUnauthorized("只有评论作者才有权限删除")
+        user.requireForumAccess()
+        if (!user.checkCustomRule { commentRepo.isCommentCanRevoke(id = id, userId = user.id) }) {
+            throwUnauthorized("没有权限删除当前评论")
         }
         val isDeleted = commentRepo.deleteComment(id)
         if (!isDeleted) throwNotFound("评论不存在")
@@ -186,8 +187,10 @@ class CommentApi(
         parent: String?,
         content: String,
     ) {
-        if (!site.startsWith("article-")) {
-            user.shouldBeOldAss()
+        if (site.startsWith("article-")) {
+            user.requireForumAccess()
+        } else {
+            user.requireNovelAccess()
         }
         if (content.isBlank()) {
             throwBadRequest("回复内容不能为空")
@@ -220,7 +223,7 @@ class CommentApi(
         id: String,
         hidden: Boolean,
     ) {
-        user.shouldBeAtLeast(UserRole.Maintainer)
+        user.requireMaintainer()
         val isUpdated = commentRepo.updateCommentHidden(
             id = id,
             hidden = hidden,

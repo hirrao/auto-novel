@@ -24,22 +24,6 @@ data class User(
     val createdAt: Instant,
 )
 
-fun User.shouldBeAtLeast(role: UserRole) {
-    if (!(this.role atLeast role)) {
-        throwUnauthorized("只有${role.name}及以上的用户才有权限执行此操作")
-    }
-}
-
-fun User.isOldAss(): Boolean {
-    return Clock.System.now() - createdAt >= 30.days
-}
-
-fun User.shouldBeOldAss() {
-    if (!isOldAss()) {
-        throwUnauthorized("你还太年轻了")
-    }
-}
-
 fun Application.authentication(secret: String) = install(Authentication) {
     jwt {
         verifier(
@@ -63,6 +47,49 @@ fun ApplicationCall.user(): User =
 
 fun ApplicationCall.userOrNull(): User? =
     attributes.getOrNull(AuthenticatedUserKey)
+
+private fun User.atLeast(role: UserRole) =
+    this.role atLeast role
+
+private fun User.createAtLeast(days: Int): Boolean =
+    Clock.System.now() - createdAt >= days.days
+
+suspend fun User.checkCustomRule(block: suspend () -> Boolean): Boolean =
+    atLeast(UserRole.Maintainer) || block()
+
+fun User.requireAdmin() {
+    if (atLeast(UserRole.Admin)) {
+        throwUnauthorized("当前账户没有权限执行此操作")
+    }
+}
+
+fun User.requireMaintainer() {
+    if (atLeast(UserRole.Maintainer)) {
+        throwUnauthorized("当前账户没有权限执行此操作")
+    }
+}
+
+fun User?.requireNsfwAccess() {
+    if (this == null) {
+        throwUnauthorized("游客没有权限执行此操作")
+    } else if (!createAtLeast(30)) {
+        throwUnauthorized("你还太年轻了")
+    }
+}
+
+fun User.requireForumAccess() {
+    if (!atLeast(UserRole.Member)) {
+        throwUnauthorized("当前账户没有权限执行此操作")
+    }
+}
+
+fun User.requireNovelAccess() {
+    if (!atLeast(UserRole.Member)) {
+        throwUnauthorized("当前账户没有权限执行此操作")
+    } else if (!createAtLeast(30)) {
+        throwUnauthorized("你还太年轻了")
+    }
+}
 
 fun Route.authenticateDb(
     optional: Boolean = false,

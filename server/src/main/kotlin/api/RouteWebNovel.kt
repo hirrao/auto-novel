@@ -319,7 +319,6 @@ class WebNovelApi(
     private val metadataRepo: WebNovelMetadataRepository,
     private val chapterRepo: WebNovelChapterRepository,
     private val fileRepo: WebNovelFileRepository,
-    private val userFavoredRepo: UserFavoredRepository,
     private val favoredRepo: WebNovelFavoredRepository,
     private val historyRepo: WebNovelReadHistoryRepository,
     private val wenkuMetadataRepo: WenkuNovelMetadataRepository,
@@ -338,17 +337,12 @@ class WebNovelApi(
     ): Page<WebNovelOutlineDto> {
         validatePageNumber(page)
         validatePageSize(pageSize)
+        if (filterLevel.isNsfw) user.requireNsfwAccess()
 
         val filterProviderParsed = if (filterProvider.isEmpty()) {
             return emptyPage()
         } else {
             filterProvider.split(",")
-        }
-
-        val filterLevelAllowed = if (user != null && user.isOldAss()) {
-            filterLevel
-        } else {
-            WebNovelFilter.Level.一般向
         }
 
         return metadataRepo
@@ -357,7 +351,7 @@ class WebNovelApi(
                 userQuery = queryString,
                 filterProvider = filterProviderParsed,
                 filterType = filterType,
-                filterLevel = filterLevelAllowed,
+                filterLevel = filterLevel,
                 filterTranslate = filterTranslate,
                 filterSort = filterSort,
                 page = page,
@@ -538,7 +532,7 @@ class WebNovelApi(
         wenkuId: String,
         toc: Map<String, String>,
     ) {
-        user.shouldBeOldAss()
+        user.requireNovelAccess()
 
         if (wenkuId.isNotBlank() && wenkuMetadataRepo.get(wenkuId) == null) {
             throwNotFound("文库版不存在")
@@ -612,7 +606,7 @@ class WebNovelApi(
         novelId: String,
         glossary: Map<String, String>,
     ) {
-        user.shouldBeOldAss()
+        user.requireNovelAccess()
         val novel = metadataRepo.get(providerId, novelId)
             ?: throwNovelNotFound()
         if (novel.glossary == glossary)
