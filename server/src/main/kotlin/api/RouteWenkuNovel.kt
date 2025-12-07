@@ -7,7 +7,6 @@ import infra.common.Page
 import infra.common.TranslatorId
 import infra.oplog.Operation
 import infra.oplog.OperationHistoryRepository
-import infra.user.UserRole
 import infra.wenku.*
 import infra.wenku.datasource.VolumeCreateException
 import infra.wenku.repository.WenkuNovelFavoredRepository
@@ -395,7 +394,7 @@ class WenkuNovelApi(
                 }
             }
         if (!noVolumeDeleted) {
-            user.requireMaintainer()
+            user.requireAdmin()
         }
 
         metadataRepo.update(
@@ -503,7 +502,7 @@ class WenkuNovelApi(
         novelId: String,
         volumeId: String,
     ) {
-        user.requireMaintainer()
+        user.requireAdmin()
 
         validateNovelId(novelId)
         validateVolumeId(volumeId)

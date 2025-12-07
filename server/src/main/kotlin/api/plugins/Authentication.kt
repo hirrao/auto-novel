@@ -4,7 +4,6 @@ import api.throwUnauthorized
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import infra.user.UserRepository
-import infra.user.UserRole
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -16,6 +15,37 @@ import kotlinx.datetime.Clock
 import org.koin.ktor.ext.get
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Instant
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+enum class UserRole {
+    @SerialName("admin")
+    Admin,
+
+    @SerialName("trusted")
+    Trusted,
+
+    @SerialName("member")
+    Member,
+
+    @SerialName("restricted")
+    Restricted,
+
+    @SerialName("banned")
+    Banned;
+
+    private fun authLevel() = when (this) {
+        Admin -> 4
+        Trusted -> 3
+        Member -> 2
+        Restricted -> 1
+        Banned -> 0
+    }
+
+    infix fun atLeast(other: UserRole): Boolean =
+        authLevel() >= other.authLevel()
+}
 
 data class User(
     val id: String,
@@ -55,16 +85,10 @@ private fun User.createAtLeast(days: Int): Boolean =
     Clock.System.now() - createdAt >= days.days
 
 suspend fun User.checkCustomRule(block: suspend () -> Boolean): Boolean =
-    atLeast(UserRole.Maintainer) || block()
+    atLeast(UserRole.Admin) || block()
 
 fun User.requireAdmin() {
     if (atLeast(UserRole.Admin)) {
-        throwUnauthorized("当前账户没有权限执行此操作")
-    }
-}
-
-fun User.requireMaintainer() {
-    if (atLeast(UserRole.Maintainer)) {
         throwUnauthorized("当前账户没有权限执行此操作")
     }
 }

@@ -6,7 +6,6 @@ import infra.comment.CommentRepository
 import infra.comment.Comment
 import infra.common.Page
 import infra.user.UserOutline
-import infra.user.UserRole
 import io.ktor.resources.*
 import io.ktor.server.plugins.ratelimit.*
 import io.ktor.server.request.*
@@ -142,7 +141,7 @@ class CommentApi(
         validatePageSize(pageSize)
         validatePageSize(replyPageSize, max = 20)
 
-        val ignoreHidden = user != null && user.role atLeast UserRole.Maintainer
+        val ignoreHidden = user != null && user.role atLeast UserRole.Admin
 
         return commentRepo
             .listComment(
@@ -223,7 +222,7 @@ class CommentApi(
         id: String,
         hidden: Boolean,
     ) {
-        user.requireMaintainer()
+        user.requireAdmin()
         val isUpdated = commentRepo.updateCommentHidden(
             id = id,
             hidden = hidden,
