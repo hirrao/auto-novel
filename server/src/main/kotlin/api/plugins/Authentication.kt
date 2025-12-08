@@ -88,7 +88,7 @@ suspend fun User.checkCustomRule(block: suspend () -> Boolean): Boolean =
     atLeast(UserRole.Admin) || block()
 
 fun User.requireAdmin() {
-    if (atLeast(UserRole.Admin)) {
+    if (!atLeast(UserRole.Admin)) {
         throwUnauthorized("当前账户没有权限执行此操作")
     }
 }
