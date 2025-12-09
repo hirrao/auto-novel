@@ -101,6 +101,8 @@ export interface WenkuListOptions extends ListOptions {
 export type WenkuListValue = ListValue<WenkuListOptions>;
 
 export function getWenkuListOptions(allowNsfw: boolean): WenkuListOptions {
+  const levels = ['全部小说', '轻小说', '轻文学', '文学', '非小说'];
+  const levelsNsfw = ['R18男性向', 'R18女性向'];
   return {
     搜索: {
       type: 'text',
@@ -108,9 +110,7 @@ export function getWenkuListOptions(allowNsfw: boolean): WenkuListOptions {
     },
     分级: {
       type: 'select',
-      tags: allowNsfw
-        ? ['轻小说', '轻文学', '文学', '非小说', 'R18男性向', 'R18女性向']
-        : ['轻小说', '轻文学', '文学', '非小说'],
+      tags: allowNsfw ? [...levels, ...levelsNsfw] : levels,
     },
   };
 }

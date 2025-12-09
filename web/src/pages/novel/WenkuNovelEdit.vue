@@ -263,7 +263,7 @@ const findSimilarNovels = async () => {
       page: 0,
       pageSize: 6,
       query,
-      level: 99,
+      level: 0,
     }),
   );
   if (result.ok) {

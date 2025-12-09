@@ -81,12 +81,13 @@ fun Route.routeWenkuNovel() {
                     page = loc.page,
                     pageSize = loc.pageSize,
                     filterLevel = when (loc.level) {
-                        0 -> WenkuNovelFilter.Level.轻小说
-                        1 -> WenkuNovelFilter.Level.轻文学
-                        2 -> WenkuNovelFilter.Level.文学
-                        3 -> WenkuNovelFilter.Level.非小说
-                        4 -> WenkuNovelFilter.Level.R18男性向
-                        5 -> WenkuNovelFilter.Level.R18女性向
+                        0 -> WenkuNovelFilter.Level.全部
+                        1 -> WenkuNovelFilter.Level.轻小说
+                        2 -> WenkuNovelFilter.Level.轻文学
+                        3 -> WenkuNovelFilter.Level.文学
+                        4 -> WenkuNovelFilter.Level.非小说
+                        5 -> WenkuNovelFilter.Level.R18男性向
+                        6 -> WenkuNovelFilter.Level.R18女性向
                         else -> WenkuNovelFilter.Level.全部
                     },
                 )

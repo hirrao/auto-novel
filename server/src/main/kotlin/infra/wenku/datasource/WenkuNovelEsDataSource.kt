@@ -39,15 +39,24 @@ class WenkuNovelEsDataSource(
         filterLevel: WenkuNovelFilter.Level,
     ): Pair<List<WenkuNovelMetadataEsModel>, Long> {
         val response = es.search(
-            target = target,
-            from = page * pageSize,
-            size = pageSize
+            target = target, from = page * pageSize, size = pageSize
         ) {
             query = bool {
                 val mustQueries = mutableListOf<ESQuery>()
                 val mustNotQueries = mutableListOf<ESQuery>()
 
                 // Filter level
+                if (filterLevel == WenkuNovelFilter.Level.全部) {
+                    listOf(
+                        WenkuNovelLevel.轻小说,
+                        WenkuNovelLevel.轻文学,
+                        WenkuNovelLevel.文学,
+                    ).map {
+                        term(WenkuNovelMetadataEsModel::level, it.serialName())
+                    }.let {
+                        should(it)
+                    }
+                }
                 when (filterLevel) {
                     WenkuNovelFilter.Level.全部 -> null
                     WenkuNovelFilter.Level.轻小说 -> WenkuNovelLevel.轻小说
@@ -62,20 +71,17 @@ class WenkuNovelEsDataSource(
 
                 // Parse query
                 val queryWords = mutableListOf<String>()
-                userQuery
-                    ?.split(" ")
-                    ?.forEach { token ->
-                        if (token.endsWith('$')) {
-                            val rawToken = token.removePrefix("-").removeSuffix("$")
-                            val queries =
-                                if (token.startsWith("-")) mustNotQueries
-                                else mustQueries
-                            val field = WenkuNovelMetadataEsModel::keywords
-                            queries.add(term(field, rawToken))
-                        } else {
-                            queryWords.add(token)
-                        }
+                userQuery?.split(" ")?.forEach { token ->
+                    if (token.endsWith('$')) {
+                        val rawToken = token.removePrefix("-").removeSuffix("$")
+                        val queries = if (token.startsWith("-")) mustNotQueries
+                        else mustQueries
+                        val field = WenkuNovelMetadataEsModel::keywords
+                        queries.add(term(field, rawToken))
+                    } else {
+                        queryWords.add(token)
                     }
+                }
 
                 filter(mustQueries)
                 mustNot(mustNotQueries)
@@ -93,8 +99,7 @@ class WenkuNovelEsDataSource(
                             WenkuNovelMetadataEsModel::imprint,
                         ) {
                             defaultOperator = MatchOperator.AND
-                        }
-                    )
+                        })
                 } else {
                     sort {
                         add(WenkuNovelMetadataEsModel::updateAt)
@@ -102,9 +107,7 @@ class WenkuNovelEsDataSource(
                 }
             }
         }
-        val items = response.hits?.hits
-            ?.map { hit -> hit.parseHit<WenkuNovelMetadataEsModel>() }
-            ?: emptyList()
+        val items = response.hits?.hits?.map { hit -> hit.parseHit<WenkuNovelMetadataEsModel>() } ?: emptyList()
         val total = response.total
         return Pair(items, total)
     }
