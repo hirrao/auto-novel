@@ -47,15 +47,17 @@ class WenkuNovelEsDataSource(
 
                 // Filter level
                 if (filterLevel == WenkuNovelFilter.Level.全部) {
-                    listOf(
+                    val levels = listOf(
                         WenkuNovelLevel.轻小说,
                         WenkuNovelLevel.轻文学,
                         WenkuNovelLevel.文学,
-                    ).map {
-                        term(WenkuNovelMetadataEsModel::level, it.serialName())
-                    }.let {
-                        should(it)
-                    }
+                    ).map { it.serialName() }
+                    mustQueries.add(
+                        terms(
+                            WenkuNovelMetadataEsModel::level,
+                            *levels.toTypedArray()
+                        )
+                    )
                 }
                 when (filterLevel) {
                     WenkuNovelFilter.Level.全部 -> null
