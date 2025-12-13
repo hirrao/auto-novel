@@ -35,6 +35,7 @@ const deleteUser = (username: string) => {
 
 const submitTable = () => {
   blacklist.value = {
+    ...blacklist.value,
     usernames: [...blockedUsers.value],
   };
   showModal.value = false;
@@ -78,6 +79,7 @@ const importUserBlockList = () => {
     }
   }
   blacklist.value = {
+    ...blacklist.value,
     usernames: [...blockedUsers.value],
   };
   importListRaw.value = '';

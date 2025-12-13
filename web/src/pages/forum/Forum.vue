@@ -140,7 +140,9 @@ const deleteArticle = (article: ArticleSimplified) =>
                 <c-a :to="`/forum/${article.id}`">
                   <n-text v-if="article.hidden" depth="3">[隐藏]</n-text>
                   <n-text
-                    v-else-if="blacklistStore.isBlocked(article.user.username)"
+                    v-else-if="
+                      blacklistStore.isUserBlocked(article.user.username)
+                    "
                     depth="3"
                   >
                     [屏蔽]

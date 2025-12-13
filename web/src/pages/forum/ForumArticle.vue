@@ -27,7 +27,7 @@ watch(
 const blockUserComment = async (username: string) =>
   doAction(
     (async () => {
-      blacklistStore.add(username);
+      blacklistStore.addUser(username);
     })(),
     '屏蔽用户',
     message,
@@ -36,7 +36,7 @@ const blockUserComment = async (username: string) =>
 const unblockUserComment = async (username: string) =>
   doAction(
     (async () => {
-      blacklistStore.remove(username);
+      blacklistStore.removeUser(username);
     })(),
     '解除屏蔽用户',
     message,
@@ -59,7 +59,7 @@ const unblockUserComment = async (username: string) =>
           </c-a>
         </template>
         <n-button
-          v-if="blacklistStore.isBlocked(article.user.username)"
+          v-if="blacklistStore.isUserBlocked(article.user.username)"
           text
           type="primary"
           @click="unblockUserComment(article.user.username)"

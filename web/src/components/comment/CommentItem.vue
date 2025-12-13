@@ -91,7 +91,7 @@ function unhideComment(comment: Comment1) {
 function blockUser(comment: Comment1) {
   doAction(
     (async () => {
-      blacklistStore.add(comment.user.username);
+      blacklistStore.addUser(comment.user.username);
     })(),
     '屏蔽用户',
     message,
@@ -101,7 +101,7 @@ function blockUser(comment: Comment1) {
 function unblockUser(comment: Comment1) {
   doAction(
     (async () => {
-      blacklistStore.remove(comment.user.username);
+      blacklistStore.removeUser(comment.user.username);
     })(),
     '解除屏蔽用户',
     message,
