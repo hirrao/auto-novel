@@ -15,4 +15,5 @@ server/data/
 web-extension/src/_metadata/
 
 # Deploy
+data/
 .env
