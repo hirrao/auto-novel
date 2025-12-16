@@ -283,6 +283,7 @@ private val disgustingFascistNovelList = mapOf(
         "n9603hk",
         "n5149kv",
         "n3756im",
+        "n4899kw",
     ),
     Kakuyomu.id to listOf(
         "16816927860373250234",
@@ -292,6 +293,8 @@ private val disgustingFascistNovelList = mapOf(
         "16817330661737648260",
         "16818622170290655590",
         "16818093088081078289",
+        "16818093081362454969",
+        "16818792437522674922",
     ),
     Hameln.id to listOf(
         "291561",
