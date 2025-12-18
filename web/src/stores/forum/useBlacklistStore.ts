@@ -41,8 +41,9 @@ export const useBlacklistStore = defineStore(LSKey.Blacklist, () => {
   function parseTag() {
     let str = ' ';
     blacklist.value.tags.forEach((tag) => {
-      str += `-${tag}$`;
+      str += ` -${tag}$`;
     });
+    return str;
   }
 
   return {
