@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { WebNovelRepo } from '@/repos';
-import { FavoredRepo, useWhoamiStore } from '@/stores';
+import { FavoredRepo, useBlacklistStore, useWhoamiStore } from '@/stores';
 import type { WebListValue } from './option';
 import {
   getWebListOptions,
@@ -21,6 +21,8 @@ const { whoami } = storeToRefs(whoamiStore);
 const favoredStore = FavoredRepo.useFavoredStore();
 const { favoreds } = storeToRefs(favoredStore);
 
+const blackListStore = useBlacklistStore();
+
 const listOptions = getWebListOptions(whoami.value.hasNsfwAccess);
 
 const listValue = computed(
@@ -38,7 +40,7 @@ const listValue = computed(
 const { data: novelPage, error } = WebNovelRepo.useWebNovelList(
   () => props.page,
   () => ({
-    query: listValue.value.搜索,
+    query: listValue.value.搜索 + blackListStore.parseTag(),
     provider: parseWebListValueProvider(listValue.value.来源),
     type: listValue.value.类型,
     level: listValue.value.分级,

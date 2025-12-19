@@ -166,7 +166,7 @@ const playSound = (source: string) => {
         <n-flex vertical>
           <b>黑名单</b>
           <n-flex>
-            <user-block-button />
+            <block-buttons />
           </n-flex>
         </n-flex>
       </n-list-item>

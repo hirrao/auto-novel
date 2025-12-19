@@ -84,8 +84,8 @@ const importList = () => {
 </script>
 
 <template>
-  <c-button @label="label" size="small" @action="toggleModal" />
-  <c-modal @title="title" v-model:show="showModal" :extraheight="120">
+  <c-button :label="label" size="small" @action="toggleModal" />
+  <c-modal :title="title" v-model:show="showModal" :extraheight="120">
     <template #header-extra>
       <n-flex
         vertical
@@ -96,7 +96,7 @@ const importList = () => {
           <n-input
             v-model:value="itemToAdd"
             size="small"
-            @placeholder="itemName"
+            :placeholder="itemName"
             :input-props="{ spellcheck: false }"
           />
           <c-button
