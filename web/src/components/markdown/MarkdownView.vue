@@ -6,8 +6,6 @@ import { container } from '@mdit/plugin-container';
 import { NRate } from 'naive-ui';
 import { render } from 'vue';
 
-import { PROVIDER_IDS, ProviderId } from '@auto-novel/crawler';
-
 const props = defineProps<{
   mode: 'article' | 'comment';
   source: string;
@@ -97,7 +95,15 @@ onMounted(() => {
 (() => {
   // 测试页面：https://n.novelia.cc/forum/693160100d2585161e3c68d4
   const entry = ['wenku', 'novel'];
-  const providers = PROVIDER_IDS;
+  const providers = [
+    'default',
+    'alphapolis',
+    'hameln',
+    'kakuyomu',
+    'novelup',
+    'pixiv',
+    'syosetu',
+  ] as const;
   const entryPattern = entry.join('|');
   const providerPattern = providers.join('|');
 
