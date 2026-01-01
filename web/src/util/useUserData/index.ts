@@ -43,7 +43,7 @@ function useUserDataWithoutAuth(app: string) {
   const userData = ref<UserData>({
     profile: {
       token: '',
-      username: 'user',
+      username: '本地管理员',
       role: 'admin',
       issuedAt: 0,
       createdAt: 0,
@@ -120,7 +120,8 @@ function useUserDataWithAuth(app: string) {
 }
 
 export function useUserData(app: string) {
-  if (import.meta.env.VITE_NO_AUTH === 'true') {
+  const mode = import.meta.env.VITE_API_MODE;
+  if (mode === 'local' || mode === 'native') {
     return useUserDataWithoutAuth(app);
   } else {
     return useUserDataWithAuth(app);

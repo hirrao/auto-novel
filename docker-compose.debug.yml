@@ -1,16 +1,12 @@
 services:
-  server:
-    ports:
-      - 8081:8081
-
   mongo:
     ports:
-      - 27017:27017
+      - 5001:27017
 
   elasticsearch:
     ports:
-      - 9200:9200
+      - 5002:9200
 
   redis:
     ports:
-      - 6379:6379
+      - 5003:6379
