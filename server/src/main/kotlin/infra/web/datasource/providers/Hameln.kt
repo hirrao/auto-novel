@@ -16,28 +16,19 @@ import org.jsoup.nodes.Element
 
 class Hameln(
     private val client: HttpClient,
-    useProxy: Boolean,
 ) : WebNovelProvider {
     companion object {
         const val id = "hameln"
 
-        private const val URL_ORIGIN = "https://syosetu.org"
-        private const val URL_PROXY = "https://hml.xkvi.top"
-
         suspend fun addCookies(cookies: CookiesStorage, token: String) {
             cookies.addCookie(
-                URL_ORIGIN,
+                "https://syosetu.org",
                 Cookie(name = "over18", value = "off", domain = ".syosetu.org")
-            )
-            cookies.addCookie(
-                URL_PROXY,
-                Cookie(name = "token", value = token, domain = ".hml.xkvi.top")
             )
         }
     }
 
-    private val baseUrl =
-        if (useProxy) URL_PROXY else URL_ORIGIN
+    private val baseUrl = "https://syosetu.org"
 
     override suspend fun getRank(options: Map<String, String>): Page<RemoteNovelListItem> {
         return emptyPage()
@@ -68,7 +59,6 @@ class Hameln(
                     name = el.text(),
                     link = el.selectFirst("a")
                         ?.attr("href")
-                        ?.replace(baseUrl, URL_ORIGIN),
                 )
             }
 
