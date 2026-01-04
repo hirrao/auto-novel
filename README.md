@@ -35,6 +35,7 @@ MAILGUN_FROM_EMAIL=postmaster@verify.fishhawk.top
 EOF
 
 # 3. 启动服务
+mkdir -p -m 777 ./data/es/data ./data/es/plugins
 docker compose up -d
 ```
 
