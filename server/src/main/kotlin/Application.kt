@@ -120,6 +120,7 @@ val appModule = module {
     single {
         WebNovelHttpDataSource(
             httpsProxy = env("HTTPS_PROXY"),
+            hamelnToken = env("HAMELN_TOKEN"),
             pixivPhpsessid = env("PIXIV_COOKIE_PHPSESSID"),
         )
     }
